@@ -1,0 +1,24 @@
+name: "OpenSprinkler Pi Firmware"
+version: "2.2.1"
+slug: "opensprinkler_pi_firmware"
+description: "OpenSprinkler Pi unified firmware as a Home Assistant add-on"
+url: "https://github.com/OpenSprinkler/OpenSprinkler-Firmware"
+arch:
+  - armhf
+  - aarch64
+ports:
+  8080/tcp: 8080
+ports_description:
+  8080/tcp: "OpenSprinkler Pi web interface"
+map:
+  - share:rw
+devices:
+  - /dev/gpiomem
+  - /dev/i2c-1
+privileged:
+  - SYS_RAWIO
+startup: application
+boot: auto
+init: false
+options: {}
+schema: {}
