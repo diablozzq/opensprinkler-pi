@@ -16,7 +16,14 @@ map:
   - share:rw
 devices:
   - /dev/gpiomem
+  - /dev/gpiochip0
+  - /dev/gpiochip1
+  - /dev/gpiochip2
+  - /dev/gpiochip3
+  - /dev/gpiochip4
   - /dev/i2c-1
+  - /dev/i2c-0
+gpio: true
 privileged:
   - SYS_RAWIO
 startup: application
