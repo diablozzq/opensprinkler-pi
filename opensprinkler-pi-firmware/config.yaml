@@ -19,6 +19,5 @@ privileged:
   - SYS_RAWIO
 startup: application
 boot: auto
-init: false
 options: {}
 schema: {}
