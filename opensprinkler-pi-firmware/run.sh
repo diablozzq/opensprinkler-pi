@@ -2,17 +2,11 @@
 
 bashio::log.info "Configuring data persistence..."
 
-cd /opensprinkler
+# Ensure persistent directories exist
+mkdir -p /data/logs
 
-# Persist config and log files
-for file in sopts.dat iopts.dat prog.dat nvm.dat progs.dat stns.dat log.json logs.sqlite; do
-    if [ ! -f "/data/$file" ]; then
-        # Initialize if it doesn't exist in /data
-        touch "/data/$file"
-    fi
-    # Link it back to the OpenSprinkler directory
-    ln -sf "/data/$file" "/opensprinkler/$file"
-done
+# Move to the persistent volume so all files are read/written directly there
+cd /data
 
-bashio::log.info "Starting OpenSprinkler Pi firmware 1.1"
-exec ./OpenSprinkler
+bashio::log.info "Starting OpenSprinkler Pi firmware..."
+exec /opensprinkler/OpenSprinkler
