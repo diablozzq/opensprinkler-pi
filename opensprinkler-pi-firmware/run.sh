@@ -14,5 +14,5 @@ for file in sopts.dat iopts.dat prog.dat nvm.dat progs.dat stns.dat log.json log
     ln -sf "/data/$file" "/opensprinkler/$file"
 done
 
-bashio::log.info "Starting OpenSprinkler Pi firmware..."
+bashio::log.info "Starting OpenSprinkler Pi firmware 1.1"
 exec ./OpenSprinkler
