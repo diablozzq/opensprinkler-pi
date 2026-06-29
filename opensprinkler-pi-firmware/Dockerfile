@@ -39,6 +39,9 @@ RUN echo "n" | bash build.sh ospi
 # these must live in /data (the HA persistent volume), not in the image layer.
 # run.sh will create symlinks from here -> /data/ at container start.
 RUN rm -f /opensprinkler/*.dat /opensprinkler/*.json /opensprinkler/logs/*.* 2>/dev/null || true
+RUN rm -f /opensprinkler/nvcon.dat /opensprinkler/prog.dat /opensprinkler/done.dat \
+          /opensprinkler/sopts.dat /opensprinkler/iopts.dat /opensprinkler/stns.dat \
+          /opensprinkler/log.json 2>/dev/null || true
 
 # Copy and permission the run script
 COPY run.sh /run.sh
