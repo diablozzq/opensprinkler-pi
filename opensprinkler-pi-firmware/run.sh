@@ -5,7 +5,7 @@ bashio::log.info "Configuring data persistence..."
 cd /opensprinkler
 
 # Persist config and log files
-for file in nvm.dat progs.dat stns.dat log.json logs.sqlite; do
+for file in sopts.dat iopts.dat prog.dat nvm.dat progs.dat stns.dat log.json logs.sqlite; do
     if [ ! -f "/data/$file" ]; then
         # Initialize if it doesn't exist in /data
         touch "/data/$file"
