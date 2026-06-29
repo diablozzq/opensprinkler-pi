@@ -5,48 +5,52 @@ bashio::log.info "Configuring data persistence..."
 # Ensure persistent directories exist
 mkdir -p /data/logs
 
-# List of files the OpenSprinkler firmware reads/writes next to its binary
+# These are the files OpenSprinkler writes next to its own binary
+# get_runtime_path() uses /proc/self/exe, so it always writes to /opensprinkler/
 DATA_FILES="sopts.dat iopts.dat prog.dat nvm.dat progs.dat stns.dat log.json"
 
 for file in $DATA_FILES; do
     src="/opensprinkler/${file}"
     dst="/data/${file}"
 
-    # If there's already a real file at the src location (not a symlink),
-    # and no file in /data yet, seed /data with it (first boot)
+    # If a real (non-symlink) file exists at src but not in /data, seed /data with it
     if [ -f "$src" ] && [ ! -L "$src" ] && [ ! -f "$dst" ]; then
-        bashio::log.info "Seeding $file into /data (first run)"
+        bashio::log.info "First run: seeding ${file} from image into /data"
         cp "$src" "$dst"
     fi
 
-    # Remove whatever is at src (real file or broken symlink) and replace with symlink
+    # Remove whatever is at src (real file, stale symlink, or nothing) and create fresh symlink
     rm -f "$src"
     ln -sf "$dst" "$src"
-    bashio::log.info "Linked: $src -> $dst"
 done
 
-# Also handle the logs directory
-if [ ! -L "/opensprinkler/logs" ]; then
-    rm -rf "/opensprinkler/logs"
-    ln -sf /data/logs /opensprinkler/logs
-    bashio::log.info "Linked: /opensprinkler/logs -> /data/logs"
-fi
+# Handle the logs directory
+rm -rf /opensprinkler/logs
+ln -sf /data/logs /opensprinkler/logs
 
-# Clean up any empty/zero-byte files in /data that would cause the firmware
-# to treat them as corrupt and factory-reset (do this AFTER symlinking)
+# Clean up any empty/zero-byte files in /data AFTER symlinking
+# (empty files cause firmware to factory-reset on next start)
 for file in $DATA_FILES; do
     dst="/data/${file}"
     if [ -f "$dst" ] && [ ! -s "$dst" ]; then
-        bashio::log.warning "Removing empty/corrupt file in /data: $dst"
+        bashio::log.warning "Removing empty/corrupt file: ${dst}"
         rm -f "$dst"
     fi
 done
 
-bashio::log.info "Files in /data before start:"
-ls -la /data
+# Diagnostic output so you can verify in HA logs
+bashio::log.info "=== Symlink verification ==="
+for file in $DATA_FILES; do
+    if [ -L "/opensprinkler/${file}" ]; then
+        bashio::log.info "OK: /opensprinkler/${file} -> $(readlink /opensprinkler/${file})"
+    else
+        bashio::log.warning "MISSING SYMLINK: /opensprinkler/${file}"
+    fi
+done
 
-bashio::log.info "Symlinks in /opensprinkler before start:"
-ls -la /opensprinkler/*.dat /opensprinkler/*.json 2>/dev/null || true
+bashio::log.info "=== Files in /data ==="
+ls -la /data/
+ls -la /data/logs/ 2>/dev/null || true
 
 bashio::log.info "Starting OpenSprinkler Pi firmware..."
 exec /opensprinkler/OpenSprinkler

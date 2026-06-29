@@ -6,6 +6,14 @@ One of the side benefits of this is that Home Assistant will automatically back 
 
 [OpenSprinkler Firmware Docs](https://openthings.freshdesk.com/support/solutions/articles/5000631599-installing-and-updating-the-unified-firmware)
 
+## Updating
+
+1. Modify the version in config.yaml
+2. Upload the changes to github
+3. Check for updates in the home assistant app install (the refresh button in the top right)
+4. Click "Update" under the OpenSprinkler Pi Firmware add on in the Home Assistant UI.
+5. Wait for the add on to download and install the firmware.
+
 ## GPIO Pins (Sprinkler Control)
 
 The add on supports downloading the current OpenSprinkler Pi firmware from [GitHub](https://github.com/OpenSprinkler/OpenSprinkler-Firmware).

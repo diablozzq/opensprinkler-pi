@@ -35,6 +35,11 @@ RUN sed -i 's/liblgpio-dev//g' build.sh
 # 'echo n' skips the interactive prompt about setting up a systemd startup service
 RUN echo "n" | bash build.sh ospi
 
+# Remove any .dat/.json files the build process may have generated —
+# these must live in /data (the HA persistent volume), not in the image layer.
+# run.sh will create symlinks from here -> /data/ at container start.
+RUN rm -f /opensprinkler/*.dat /opensprinkler/*.json /opensprinkler/logs/*.* 2>/dev/null || true
+
 # Copy and permission the run script
 COPY run.sh /run.sh
 RUN chmod +x /run.sh
